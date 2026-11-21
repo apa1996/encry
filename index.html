@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Encryption Works | Interactive Classroom Demo</title>
+<style>
+:root{--bg:#0b1220;--panel:#121e32;--panel2:#172640;--ink:#edf4ff;--muted:#a9b9d1;--cyan:#53d8e8;--green:#63e6a5;--purple:#b69cff;--line:#2a3c59;--danger:#ff9b9b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#193456 0,transparent 35%),linear-gradient(145deg,#09111f,#101b2d 65%,#0b1423);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.55}
+.wrap{max-width:1080px;margin:auto;padding:28px 18px 55px}.hero{text-align:center;padding:26px 10px 30px}.eyebrow{color:var(--cyan);font-weight:700;letter-spacing:2px;text-transform:uppercase;font-size:.78rem}.hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.1;margin:12px 0}.hero p{color:var(--muted);max-width:700px;margin:0 auto}.lock{font-size:2.6rem;display:inline-block;filter:drop-shadow(0 0 16px #53d8e855)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:linear-gradient(160deg,#162640,#101b2d);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 12px 35px #0003}.card h2{margin:0 0 5px;font-size:1.25rem}.sub{color:var(--muted);font-size:.91rem;margin:0 0 18px}label{display:block;font-weight:650;margin:13px 0 7px}textarea,input,select{width:100%;background:#091525;border:1px solid #344a69;border-radius:10px;color:var(--ink);padding:12px 13px;font:inherit;outline:none}textarea{min-height:105px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #53d8e822}.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}.keyval{font-weight:800;color:var(--cyan);text-align:right;min-width:42px}.range{accent-color:var(--cyan);padding:0}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:10px;padding:12px 17px;font-weight:750;font-size:.95rem;cursor:pointer;transition:.18s}button:hover{transform:translateY(-1px);filter:brightness(1.1)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:linear-gradient(90deg,#36c7dc,#5b9cff);color:#071525}.secondary{background:#263b59;color:var(--ink);border:1px solid #3b5274}.green{background:#174b3b;color:#aaffd2;border:1px solid #287a5a}.output{background:#081525;border:1px dashed #3a5578;border-radius:12px;padding:15px;margin-top:17px;min-height:82px;overflow-wrap:anywhere}.output small{display:block;color:var(--muted);font-weight:700;letter-spacing:1px;margin-bottom:7px}.cipher{font-family:ui-monospace,Consolas,monospace;font-size:1.12rem;color:var(--green);word-break:break-word}.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin:18px 0}.step{background:#0b192b;border:1px solid var(--line);border-radius:12px;text-align:center;padding:13px 8px}.step b{display:block;font-size:.9rem}.step span{font-size:.76rem;color:var(--muted)}.arrow{color:var(--cyan);font-size:1.3rem}.explain{margin-top:18px;border-left:3px solid var(--purple);padding:10px 14px;background:#b69cff0d;color:#d8d0ff;border-radius:0 10px 10px 0}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.tab{background:#1a2a43;color:var(--muted);border:1px solid var(--line)}.tab.active{background:#16445a;color:#b8f7ff;border-color:#3caec0}.hidden{display:none!important}.note{font-size:.86rem;color:var(--muted)}.status{margin-top:12px;min-height:24px;color:var(--green);font-size:.9rem}.lesson{margin-top:20px}.lesson details{background:#111e31;border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:9px 0}.lesson summary{cursor:pointer;font-weight:700}.lesson p{color:var(--muted);margin-bottom:0}.footer{text-align:center;color:#8498b5;font-size:.8rem;margin-top:30px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}.row{align-items:flex-start}.card{padding:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="lock">🔐</div>
+  <div class="eyebrow">Interactive Computer Science Lesson</div>
+  <h1>How Does <span style="color:var(--cyan)">Encryption</span> Work?</h1>
+  <p>Turn a readable message into coded text, send it securely, and unlock it again with the correct key. Try the activities below!</p>
+</header>
+
+<div class="flow" aria-label="Encryption process">
+  <div class="step"><b>📝 PLAINTEXT</b><span>Original message</span></div><div class="arrow">➜</div>
+  <div class="step"><b>🔒 ENCRYPTION</b><span>Message + key</span></div><div class="arrow">➜</div>
+  <div class="step"><b>🔐 CIPHERTEXT</b><span>Coded message</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="caesarTab" type="button">1. Caesar Cipher</button>
+  <button class="tab" id="aesTab" type="button">2. Modern AES Demo</button>
+</div>
+
+<section id="caesarPanel" class="card">
+  <h2>🔤 Activity 1: Caesar Cipher</h2>
+  <p class="sub">A beginner-friendly method: move every letter forward by a fixed number of places in the alphabet.</p>
+  <label for="plain">Enter your message (plaintext)</label>
+  <textarea id="plain" placeholder="Example: HELLO STUDENTS">HELLO STUDENTS</textarea>
+  <label for="shift">Choose a secret key (shift)</label>
+  <div class="row"><input class="range" id="shift" type="range" min="1" max="25" value="3"><div class="keyval" id="shiftValue">3</div></div>
+  <div class="btns">
+    <button class="primary" id="encryptBtn" type="button">🔒 Encrypt message</button>
+    <button class="green" id="decryptBtn" type="button">🔓 Decrypt message</button>
+    <button class="secondary" id="resetBtn" type="button">↺ Reset</button>
+  </div>
+  <div class="output"><small>ENCRYPTED / DECRYPTED RESULT</small><div class="cipher" id="result" aria-live="polite">Your result will appear here.</div></div>
+  <div class="explain" id="explanation">For example, with key 3: A becomes D, B becomes E, and X becomes A. Spaces and punctuation stay unchanged.</div>
+  <div class="status" id="caesarStatus" aria-live="polite"></div>
+  <p class="note">Classroom note: Caesar Cipher is useful for learning the idea of encryption, but it is not secure for real secrets.</p>
+</section>
+
+<section id="aesPanel" class="card hidden">
+  <h2>🛡️ Activity 2: Modern AES Encryption</h2>
+  <p class="sub">Try AES-GCM, a modern encryption method provided by your browser. The same password is needed to decrypt the message.</p>
+  <label for="aesPlain">Message to protect</label>
+  <textarea id="aesPlain" placeholder="Type a private classroom message">Meet me in the computer lab at 10.</textarea>
+  <label for="password">Secret password</label>
+  <input id="password" type="password" autocomplete="new-password" placeholder="Enter a password (at least 8 characters)">
+  <div class="btns">
+    <button class="primary" id="aesEncrypt" type="button">🔒 Encrypt with AES</button>
+    <button class="green" id="aesDecrypt" type="button" disabled>🔓 Decrypt with password</button>
+  </div>
+  <div class="output"><small>ENCRYPTED DATA (BASE64)</small><div class="cipher" id="aesCipher">Your encrypted data will appear here.</div></div>
+  <div class="output"><small>DECRYPTED MESSAGE</small><div class="cipher" id="aesResult">The original message will appear here after decryption.</div></div>
+  <div class="status" id="aesStatus" aria-live="polite"></div>
+  <p class="note">This demonstration uses the browser's Web Crypto API, a random salt and a random initialization vector (IV). The password is not sent to a server. Use a strong, unique password. This is a learning demo, not a complete secure messaging application.</p>
+</section>
+
+<div class="lesson">
+  <h2>📚 Learn the important terms</h2>
+  <details open><summary>What is plaintext?</summary><p>Plaintext is the original message that people can read, such as “HELLO”.</p></details>
+  <details><summary>What is encryption?</summary><p>Encryption is the process of changing readable information into coded information so that it cannot easily be understood by an unauthorized person.</p></details>
+  <details><summary>What is ciphertext?</summary><p>Ciphertext is the coded result produced after encryption.</p></details>
+  <details><summary>What is a key?</summary><p>A key is information used by an encryption algorithm to encrypt or decrypt a message. In this demo, the Caesar key is a number; the AES demo uses a password-derived key.</p></details>
+  <details><summary>What is decryption?</summary><p>Decryption changes ciphertext back into the original readable message using the correct key.</p></details>
+</div>
+<div class="footer">Developed by <strong style="color:var(--cyan)">Aparup Sarkar</strong><br>Made for classroom learning • Runs locally in your web browser • No installation required</div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const caesarTab=$('caesarTab'), aesTab=$('aesTab'), caesarPanel=$('caesarPanel'), aesPanel=$('aesPanel');
+function selectTab(which){
+  const caesar=which==='caesar';
+  caesarPanel.classList.toggle('hidden',!caesar); aesPanel.classList.toggle('hidden',caesar);
+  caesarTab.classList.toggle('active',caesar); aesTab.classList.toggle('active',!caesar);
+}
+caesarTab.addEventListener('click',()=>selectTab('caesar'));
+aesTab.addEventListener('click',()=>selectTab('aes'));
+
+function shiftText(text, amount){
+  return [...text].map(ch=>{
+    const code=ch.charCodeAt(0);
+    if(code>=65&&code<=90)return String.fromCharCode((code-65+amount+26)%26+65);
+    if(code>=97&&code<=122)return String.fromCharCode((code-97+amount+26)%26+97);
+    return ch;
+  }).join('');
+}
+$('shift').addEventListener('input',()=>{$('shiftValue').textContent=$('shift').value;});
+$('encryptBtn').addEventListener('click',()=>{
+  const text=$('plain').value, key=Number($('shift').value);
+  $('result').textContent=shiftText(text,key);
+  $('explanation').textContent=`Encryption: each letter moves ${key} place(s) forward. For example, A becomes ${shiftText('A',key)}.`;
+  $('caesarStatus').textContent='Message encrypted successfully in this demonstration.';
+});
+$('decryptBtn').addEventListener('click',()=>{
+  const text=$('plain').value, key=Number($('shift').value);
+  $('result').textContent=shiftText(text,-key);
+  $('explanation').textContent=`Decryption: each letter moves ${key} place(s) backward to recover the original message.`;
+  $('caesarStatus').textContent='Decryption complete.';
+});
+$('resetBtn').addEventListener('click',()=>{
+  $('plain').value='HELLO STUDENTS';$('shift').value=3;$('shiftValue').textContent='3';
+  $('result').textContent='Your result will appear here.';$('caesarStatus').textContent='';
+  $('explanation').textContent='For example, with key 3: A becomes D, B becomes E, and X becomes A. Spaces and punctuation stay unchanged.';
+});
+
+let encryptedPackage=null;
+const encoder=new TextEncoder(), decoder=new TextDecoder();
+function toB64(bytes){let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary);}
+function fromB64(str){return Uint8Array.from(atob(str),c=>c.charCodeAt(0));}
+async function deriveKey(password,salt){
+  const material=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+function setAesStatus(message,isError=false){$('aesStatus').textContent=message;$('aesStatus').style.color=isError?'var(--danger)':'var(--green)';}
+$('aesEncrypt').addEventListener('click',async()=>{
+  const message=$('aesPlain').value,password=$('password').value;
+  if(!message){setAesStatus('Please enter a message first.',true);return;}
+  if(password.length<8){setAesStatus('Please use a password with at least 8 characters for this demo.',true);return;}
+  if(!window.crypto?.subtle){setAesStatus('Web Crypto is unavailable. Open this file in a modern browser, preferably using localhost or HTTPS.',true);return;}
+  $('aesEncrypt').disabled=true;setAesStatus('Encrypting…');
+  try{
+    const salt=crypto.getRandomValues(new Uint8Array(16));
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const key=await deriveKey(password,salt);
+    const ciphertext=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,encoder.encode(message)));
+    encryptedPackage={salt,iv,ciphertext};
+    const packed=new Uint8Array(salt.length+iv.length+ciphertext.length);
+    packed.set(salt,0);packed.set(iv,salt.length);packed.set(ciphertext,salt.length+iv.length);
+    $('aesCipher').textContent=toB64(packed);
+    $('aesResult').textContent='Waiting for decryption…';
+    $('aesDecrypt').disabled=false;
+    setAesStatus('Encrypted! The ciphertext is now ready to decrypt with the correct password.');
+  }catch(e){setAesStatus('Encryption failed: '+e.message,true);}
+  finally{$('aesEncrypt').disabled=false;}
+});
+$('aesDecrypt').addEventListener('click',async()=>{
+  if(!encryptedPackage){setAesStatus('Encrypt a message first.',true);return;}
+  const password=$('password').value;
+  $('aesDecrypt').disabled=true;setAesStatus('Checking password and decrypting…');
+  try{
+    const key=await deriveKey(password,encryptedPackage.salt);
+    const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:encryptedPackage.iv},key,encryptedPackage.ciphertext);
+    $('aesResult').textContent=decoder.decode(plain);
+    setAesStatus('Success! The original message has been recovered.');
+  }catch(e){
+    $('aesResult').textContent='Unable to decrypt this message.';
+    setAesStatus('Decryption failed. Check the password or encrypt the message again.',true);
+  }finally{$('aesDecrypt').disabled=false;}
+});
+</script>
+</body>
+</html>
